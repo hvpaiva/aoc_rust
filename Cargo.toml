@@ -1,0 +1,19 @@
+[workspace]
+members = ["aoc_*", "aocr"]
+default-members = ["aoc_*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[workspace.dependencies]
+anyhow = "1.0.93"
+assert_cmd = "2.0.16"
+clap = "4.5.21"
+clipboard = "0.5.0"
+colored = "2.1.0"
+predicates = "3.1.2"
+pretty_assertions = "1.4.1"
+ctor = "0.2.8"
+rstest = "0.23.0"
