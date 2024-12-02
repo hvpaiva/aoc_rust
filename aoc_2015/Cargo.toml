@@ -3,4 +3,16 @@ name = "aoc_2015"
 version.workspace = true
 edition.workspace = true
 
+[[bin]]
+name = "01"
+
 [dependencies]
+anyhow.workspace = true
+aocr = { path = "../aocr" }
+aocr_macro = { path = "../aocr_macro" }
+clap = { workspace = true, features = ["derive"] }
+ctor.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+rstest.workspace = true

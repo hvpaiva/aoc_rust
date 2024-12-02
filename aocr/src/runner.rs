@@ -1,17 +1,18 @@
 use clipboard::{ClipboardContext, ClipboardProvider};
 use colored::*;
-use std::{collections::HashMap, fmt::Display, path::PathBuf, sync::RwLock};
+use std::{collections::HashMap, fmt::Display, path::PathBuf, str::FromStr, sync::RwLock};
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::{Parser, ValueEnum};
 
 /// Runner arguments for Advent of Code problems.
 ///
 /// This struct is used to parse command line arguments for the `aocr` binary.
 #[derive(Debug, Parser)]
+#[command(version)]
 pub struct AocRunnerArgs {
     /// The part of the Advent of Code problem to run.
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "one")]
     part: Part,
     /// The optional name of the solution function.
     ///
@@ -44,7 +45,30 @@ impl Display for Part {
     }
 }
 
-type SolutionFn = fn(&str) -> Result<i64>;
+impl FromStr for Part {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "1" | "one" => Ok(Part::One),
+            "2" | "two" => Ok(Part::Two),
+            _ => Err(anyhow::anyhow!("Invalid part: {}", s)),
+        }
+    }
+}
+
+impl From<&str> for Part {
+    fn from(s: &str) -> Self {
+        s.parse().unwrap()
+    }
+}
+
+impl From<String> for Part {
+    fn from(s: String) -> Self {
+        s.as_str().into()
+    }
+}
+
+type SolutionFn = fn(&str) -> i64;
 type FunctionRegistry = HashMap<String, SolutionFn>;
 
 lazy_static::lazy_static! {
@@ -54,7 +78,7 @@ lazy_static::lazy_static! {
 /// Registers a solution function for the given part and name.
 ///
 /// Intended to be used by a proc macro to automatically register solution functions.
-pub fn register_function(part: &str, name: &str, func: fn(&str) -> Result<i64>) {
+pub fn register_function(part: &str, name: &str, func: fn(&str) -> i64) {
     let func_name = format!("{}_{}", name, part);
     FUNCTION_REGISTRY
         .write()
@@ -72,15 +96,38 @@ pub fn run(input_path: PathBuf, args: AocRunnerArgs) -> Result<()> {
     let registry = FUNCTION_REGISTRY
         .read()
         .expect("Failed to acquire read lock");
-    let func = registry
-        .get(format!("{}_{}", args.name, args.part).as_str())
-        .ok_or_else(|| anyhow::anyhow!("Unable to find a function for the given part and name"))?;
+
+    let named_func = registry.get(format!("{}_{}", args.name, args.part).as_str());
+    if args.name != "solution" && named_func.is_none() {
+        return Err(anyhow!(
+            "Unable to find a function for the given part and name"
+        ));
+    }
+
+    let (func_name, func) = match named_func {
+        Some(func) => Ok((&args.name, func)),
+        None => {
+            let any_func = registry
+                .iter()
+                .filter(|(k, _)| k.ends_with(args.part.as_str()))
+                .collect::<Vec<_>>();
+
+            if any_func.is_empty() {
+                Err(anyhow!("No functions found for part {}", args.part))
+            } else if any_func.len() > 1 {
+                Err(anyhow!("Multiple functions found for part {}", args.part))
+            } else {
+                Ok((any_func[0].0, any_func[0].1))
+            }
+        }
+    }?;
 
     println!(
-        "Running part {} solution:\n",
-        args.part.as_str().cyan().bold()
+        "Running part {} for {} func:\n",
+        args.part.as_str().cyan().bold(),
+        func_name.cyan().bold(),
     );
-    let output = func(&input)?;
+    let output = func(&input);
 
     println!(
         "{} {}",
@@ -102,7 +149,6 @@ pub fn run(input_path: PathBuf, args: AocRunnerArgs) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use anyhow::Result;
     use pretty_assertions::assert_eq;
     use std::path::PathBuf;
 
@@ -118,8 +164,8 @@ mod tests {
         assert_eq!(format!("{}", Part::Two), "two");
     }
 
-    fn sample_solution(input: &str) -> Result<i64> {
-        Ok(input.parse().unwrap_or(0))
+    fn sample_solution(input: &str) -> i64 {
+        input.parse().unwrap_or(0)
     }
 
     #[test]
@@ -142,7 +188,7 @@ mod tests {
             .get(&format!("{}_{}", name, Part::One.as_str()))
             .expect("Function not found in registry");
 
-        let result = func("42").unwrap();
+        let result = func("42");
         assert_eq!(result, 42);
     }
 

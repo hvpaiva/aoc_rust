@@ -1,5 +1,5 @@
 [workspace]
-members = ["aoc_*", "aocr"]
+members = ["aoc_*", "aocr", "aocr_macro"]
 default-members = ["aoc_*"]
 resolver = "2"
 

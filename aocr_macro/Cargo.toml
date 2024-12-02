@@ -1,0 +1,13 @@
+[package]
+name = "aocr_macro"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+ctor.workspace = true
+quote = "1.0.37"
+syn = { version = "2.0.89", features = ["full"] }
+aocr = { path = "../aocr" }
