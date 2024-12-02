@@ -1,5 +1,5 @@
 [package]
-name = "aoc_2015"
+name = "{{project-name}}"
 version.workspace = true
 edition.workspace = true
 

@@ -1,0 +1,4 @@
+current_year = 2015
+current_day = 1
+initialized_years = [2015]
+initialized_days = [[2015, 1]]

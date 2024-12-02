@@ -1,15 +1,12 @@
 [package]
-name = "aoc_2015"
+name = "aocr_cli"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
 anyhow.workspace = true
 aocr = { path = "../aocr" }
-aocr_macro = { path = "../aocr_macro" }
 clap = { workspace = true, features = ["derive"] }
-ctor.workspace = true
-
-[dev-dependencies]
-pretty_assertions.workspace = true
-rstest.workspace = true
+dirs = "5.0.1"
+serde = { version = "1.0.215", features = ["derive"] }
+toml = "0.8.19"

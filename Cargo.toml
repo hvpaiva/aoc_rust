@@ -1,6 +1,6 @@
 [workspace]
-members = ["aoc_*", "aocr", "aocr_macro"]
-default-members = ["aoc_*"]
+members = ["aoc_*", "aocr", "aocr_cli", "aocr_macro"]
+default-members = ["aocr_cli"]
 resolver = "2"
 
 [workspace.package]
