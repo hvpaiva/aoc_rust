@@ -80,34 +80,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aoc_2018"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "aocr",
- "aocr_macro",
- "clap",
- "ctor",
- "predicates",
- "pretty_assertions",
- "rstest",
-]
-
-[[package]]
-name = "aoc_2019"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "aocr",
- "aocr_macro",
- "clap",
- "ctor",
- "predicates",
- "pretty_assertions",
- "rstest",
-]
-
-[[package]]
 name = "aocr"
 version = "0.1.0"
 dependencies = [

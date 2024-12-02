@@ -172,7 +172,6 @@ fn run_solution(year: Option<u16>, day: Option<u8>, part: Option<Part>, name: Op
 }
 
 fn test_solution(year: Option<u16>, day: Option<u8>, name: Option<String>) {
-    let mut state = StateFile::load().unwrap();
     let state = StateFile::load().unwrap();
     let day = day.or(state.current_day).unwrap();
     let year = year.or(state.current_year).unwrap();
