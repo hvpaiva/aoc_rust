@@ -34,7 +34,9 @@ impl StateFile {
 
     pub fn set_current_year(&mut self, year: u16) -> Result<()> {
         self.current_year = Some(year);
-        self.initialized_years.push(year);
+        if !self.initialized_years.contains(&year) {
+            self.initialized_years.push(year);
+        }
         self.initialized_years.sort();
 
         self.save()
@@ -43,7 +45,13 @@ impl StateFile {
     pub fn set_current_day(&mut self, day: u8, year: u16) -> Result<()> {
         self.current_day = Some(day);
         self.current_year = Some(year);
-        self.initialized_days.push((year, day));
+        if !self.initialized_years.contains(&year) {
+            self.initialized_years.push(year);
+        }
+        if !self.initialized_days.contains(&(year, day)) {
+            self.initialized_days.push((year, day));
+        }
+        self.initialized_years.sort();
         self.initialized_days.sort();
         self.save()
     }
