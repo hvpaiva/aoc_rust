@@ -3,23 +3,12 @@ use std::{env::current_dir, fs, path::PathBuf};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct StateFile {
     pub current_year: Option<u16>,
     pub current_day: Option<u8>,
     initialized_years: Vec<u16>,
     initialized_days: Vec<(u16, u8)>,
-}
-
-impl Default for StateFile {
-    fn default() -> Self {
-        Self {
-            current_year: None,
-            current_day: None,
-            initialized_years: vec![],
-            initialized_days: vec![],
-        }
-    }
 }
 
 impl StateFile {

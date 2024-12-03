@@ -123,7 +123,7 @@ pub fn run(input_path: PathBuf, args: AocRunnerArgs) -> Result<()> {
     }?;
 
     println!(
-        "Running part {} for {} func:\n",
+        "🌟 Part {} for {}:\n",
         args.part.as_str().cyan().bold(),
         func_name.cyan().bold(),
     );

@@ -2,6 +2,7 @@ use std::process::Command;
 
 use aocr::runner::Part;
 use clap::{Parser, Subcommand};
+use colored::*;
 use config::StateFile;
 
 mod config;
@@ -110,6 +111,9 @@ fn create_day(year: Option<u16>, day: u8) {
     if state.has_initialized_day(&year, &day) {
         panic!("Day {} is already initialized for year {}", day, year);
     }
+    if !state.has_initialized_year(&year) {
+        init_year(year);
+    }
     state.set_current_day(day, year).unwrap();
 
     Command::new("cargo")
@@ -151,9 +155,15 @@ fn run_solution(year: Option<u16>, day: Option<u8>, part: Option<Part>, name: Op
     let day = day.or(state.current_day).unwrap();
     let year = year.or(state.current_year).unwrap();
 
+    let message = format!("🎄 Running AoC {}/{:02}\n", year, day)
+        .bold()
+        .purple();
+    println!("{}", message);
+
     let mut runner = Command::new("cargo");
     runner
         .arg("run")
+        .arg("-q")
         .arg("-p")
         .arg(format!("aoc_{}", year))
         .arg("--bin")
@@ -179,7 +189,6 @@ fn test_solution(year: Option<u16>, day: Option<u8>, name: Option<String>) {
     let mut runner = Command::new("cargo");
     runner
         .arg("test")
-        .arg("-q")
         .arg("-p")
         .arg(format!("aoc_{}", year))
         .arg("--bin")

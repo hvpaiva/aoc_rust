@@ -7,6 +7,7 @@ edition.workspace = true
 anyhow.workspace = true
 aocr = { path = "../aocr" }
 clap = { workspace = true, features = ["derive"] }
+colored.workspace = true
 dirs = "5.0.1"
 serde = { version = "1.0.215", features = ["derive"] }
 toml = "0.8.19"

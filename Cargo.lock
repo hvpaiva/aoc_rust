@@ -102,6 +102,7 @@ dependencies = [
  "anyhow",
  "aocr",
  "clap",
+ "colored",
  "dirs",
  "serde",
  "toml",
