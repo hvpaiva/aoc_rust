@@ -58,6 +58,8 @@ enum CommandCli {
         year: Option<u16>,
         #[arg(short, long)]
         day: Option<u8>,
+        #[arg(short, long, default_value_t = Part::One)]
+        part: Part,
     },
 }
 
@@ -79,7 +81,8 @@ fn main() {
             warmup,
             day,
             year,
-        } => bench(solutions, warmup, day, year),
+            part,
+        } => bench(solutions, warmup, day, year, part),
     }
 }
 
@@ -221,7 +224,7 @@ fn set(year: u16, day: u8) {
     state.set_current_day(day, year).unwrap();
 }
 
-fn bench(solutions: Vec<String>, warmup: u8, day: Option<u8>, year: Option<u16>) {
+fn bench(solutions: Vec<String>, warmup: u8, day: Option<u8>, year: Option<u16>, part: Part) {
     let state = StateFile::load().unwrap();
     let day = day.or(state.current_day).unwrap();
     let year = year.or(state.current_year).unwrap();
@@ -231,15 +234,16 @@ fn bench(solutions: Vec<String>, warmup: u8, day: Option<u8>, year: Option<u16>)
     bench.arg("--warmup").arg(warmup.to_string());
 
     for solution in solutions {
-        bench
-            .arg("-n")
-            .arg(&solution)
-            .arg(format!("cargo aocr run -n {solution} -d {day} -y {year}"));
+        bench.arg("-n").arg(&solution).arg(format!(
+            "cargo aocr run -n {solution} -d {day} -y {year} -p {}",
+            part.as_str()
+        ));
     }
 
-    bench
-        .arg("--export-markdown")
-        .arg(format!("aoc_{year}/src/bin/{day:02}/benchmark.md"));
+    bench.arg("--export-markdown").arg(format!(
+        "aoc_{year}/src/bin/{day:02}/benchmark-part_{}.md",
+        part.as_str()
+    ));
 
     bench.status().unwrap();
 }
