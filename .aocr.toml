@@ -1,4 +1,4 @@
-current_year = 2015
+current_year = 2024
 current_day = 1
-initialized_years = [2015]
-initialized_days = [[2015, 1]]
+initialized_years = [2015, 2024]
+initialized_days = [[2015, 1], [2024, 1]]

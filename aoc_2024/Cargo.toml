@@ -1,0 +1,17 @@
+[package]
+name = "aoc_2024"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+aocr = { path = "../aocr" }
+aocr_macro = { path = "../aocr_macro" }
+clap = { workspace = true, features = ["derive"] }
+ctor.workspace = true
+nom.workspace = true
+
+[dev-dependencies]
+predicates.workspace = true
+pretty_assertions.workspace = true
+rstest.workspace = true
