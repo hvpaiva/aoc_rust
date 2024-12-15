@@ -50,6 +50,15 @@ enum CommandCli {
         #[arg(short, long)]
         day: u8,
     },
+    Bench {
+        solutions: Vec<String>,
+        #[arg(short, long, default_value = "3")]
+        warmup: u8,
+        #[arg(short, long)]
+        year: Option<u16>,
+        #[arg(short, long)]
+        day: Option<u8>,
+    },
 }
 
 fn main() {
@@ -65,6 +74,12 @@ fn main() {
         } => run_solution(year, day, part, name),
         CommandCli::Test { year, day, name } => test_solution(year, day, name),
         CommandCli::Set { year, day } => set(year, day),
+        CommandCli::Bench {
+            solutions,
+            warmup,
+            day,
+            year,
+        } => bench(solutions, warmup, day, year),
     }
 }
 
@@ -204,4 +219,27 @@ fn test_solution(year: Option<u16>, day: Option<u8>, name: Option<String>) {
 fn set(year: u16, day: u8) {
     let mut state = StateFile::load().unwrap();
     state.set_current_day(day, year).unwrap();
+}
+
+fn bench(solutions: Vec<String>, warmup: u8, day: Option<u8>, year: Option<u16>) {
+    let state = StateFile::load().unwrap();
+    let day = day.or(state.current_day).unwrap();
+    let year = year.or(state.current_year).unwrap();
+
+    let mut bench = Command::new("hyperfine");
+
+    bench.arg("--warmup").arg(warmup.to_string());
+
+    for solution in solutions {
+        bench
+            .arg("-n")
+            .arg(&solution)
+            .arg(format!("cargo aocr run -n {solution} -d {day} -y {year}"));
+    }
+
+    bench
+        .arg("--export-markdown")
+        .arg(format!("aoc_{year}/src/bin/{day:02}/benchmark.md"));
+
+    bench.status().unwrap();
 }
