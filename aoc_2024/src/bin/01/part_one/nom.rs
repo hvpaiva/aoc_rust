@@ -36,13 +36,11 @@ fn parse(input: &str) -> IResult<&str, (Vec<i64>, Vec<i64>)> {
 
 #[cfg(test)]
 mod tests {
-    use super::solve_one;
-
     #[test]
     fn test_part_one_input() {
         let input = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3";
 
         let expected = 11;
-        pretty_assertions::assert_eq!(solve_one(input), expected);
+        pretty_assertions::assert_eq!(super::solve_one(input), expected);
     }
 }

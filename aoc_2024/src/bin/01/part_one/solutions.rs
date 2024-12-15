@@ -25,15 +25,11 @@ fn parse_tuple(s: (&str, &str)) -> (i64, i64) {
 
 #[cfg(test)]
 mod tests {
-    use pretty_assertions::assert_eq;
-
-    use super::*;
-
     #[test]
     fn test_part_one_input() {
         let input = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3";
 
         let expected = 11;
-        assert_eq!(solve_one(input), expected);
+        pretty_assertions::assert_eq!(super::solve_one(input), expected);
     }
 }

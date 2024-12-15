@@ -52,7 +52,7 @@ enum CommandCli {
     },
     Bench {
         solutions: Vec<String>,
-        #[arg(short, long, default_value = "3")]
+        #[arg(short, long, default_value = "100")]
         warmup: u8,
         #[arg(short, long)]
         year: Option<u16>,
@@ -229,15 +229,24 @@ fn bench(solutions: Vec<String>, warmup: u8, day: Option<u8>, year: Option<u16>,
     let day = day.or(state.current_day).unwrap();
     let year = year.or(state.current_year).unwrap();
 
-    let mut bench = Command::new("hyperfine");
+    Command::new("cargo")
+        .arg("build")
+        .arg("--release")
+        .arg("-p")
+        .arg(format!("aoc_{}", year))
+        .arg("--bin")
+        .arg(format!("{:02}", day))
+        .status()
+        .expect("Failed to build binary");
 
+    let binary_path = format!("./target/release/{:02}", day);
+
+    let mut bench = Command::new("hyperfine");
     bench.arg("--warmup").arg(warmup.to_string());
 
     for solution in solutions {
-        bench.arg("-n").arg(&solution).arg(format!(
-            "cargo aocr run -n {solution} -d {day} -y {year} -p {}",
-            part.as_str()
-        ));
+        let cmd = format!("{} -n {} -p {}", binary_path, solution, part.as_str());
+        bench.arg("-n").arg(solution).arg(cmd);
     }
 
     bench.arg("--export-markdown").arg(format!(
@@ -245,5 +254,5 @@ fn bench(solutions: Vec<String>, warmup: u8, day: Option<u8>, year: Option<u16>,
         part.as_str()
     ));
 
-    bench.status().unwrap();
+    bench.arg("-N").status().unwrap();
 }
